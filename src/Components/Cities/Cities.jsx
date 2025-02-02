@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { axios, Forimage } from "../../Server/Api";
+import { toast } from "react-toastify";
 
 const Cities = () => {
   const [data, setData] = useState(null);
   const [editId, setEditId] = useState(null);
   const [create, setCreate] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [loadingBtn, setLoadingBtn] = useState(false);
 
   // Get Cities
   useEffect(() => {
@@ -17,7 +20,7 @@ const Cities = () => {
   // Add new Cities
   const handleAdd = async (evt) => {
     evt.preventDefault();
-    setCreate("newCities");
+    setLoadingBtn(true);
 
     const formData = new FormData();
     formData.append("name", document.getElementById("name")?.value);
@@ -31,19 +34,19 @@ const Cities = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log("Add successful:", response?.data);
+      toast.success("Add successful");
       setCreate(null);
     } catch (error) {
-      console.error(
-        "Error during add:",
-        error?.response?.data || error.message
-      );
+      toast.error("Error, Please try again");
+    } finally {
+      setLoadingBtn(false);
     }
   };
 
   // Edit Cities
   const handleEdit = async (evt) => {
     evt.preventDefault();
+    setLoadingBtn(true);
 
     const formData = new FormData();
     formData.append("name", document.getElementById("name")?.value);
@@ -58,17 +61,17 @@ const Cities = () => {
         },
       });
       setEditId(null);
-      console.log("Update successful:", response?.data);
+      toast.success("Update successful");
     } catch (error) {
-      console.error(
-        "Error during update:",
-        error?.response?.data || error.message
-      );
+      toast.error("Error, Please try again");
+    } finally {
+      setLoadingBtn(false);
     }
   };
 
   // Delete Cities
   const handleDelete = () => {
+    setLoadingBtn(true);
     axios
       .delete(`/cities/${deleteId}`, {
         headers: {
@@ -76,14 +79,38 @@ const Cities = () => {
         },
       })
       .then(() => {
+        toast.success("Success to delete");
         setDeleteId(null);
+      })
+      .catch(() => {
+        toast.error("Error, Please try again");
+      })
+      .finally(() => {
+        setLoadingBtn(false);
       });
   };
+
+  useEffect(() => {
+    if (!data) {
+      setLoading(true);
+    } else {
+      setLoading(false);
+    }
+  }, [data]);
 
   return (
     <>
       <section>
-        <h2 className="mb-6 font-bold text-3xl">Cities</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="font-bold text-3xl">Cities</h2>
+          <button
+            onClick={() => setCreate("newCities")}
+            type="button"
+            className="cursor-pointer focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+          >
+            Add new Cities
+          </button>
+        </div>
 
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -107,6 +134,43 @@ const Cities = () => {
               </tr>
             </thead>
             <tbody>
+              {loading && (
+                <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200">
+                  <th
+                    scope="row"
+                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  >
+                    <div>
+                      <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                      <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                    </div>
+                  </th>
+                  <td className="px-6 py-4">
+                    <div>
+                      <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                      <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div>
+                      <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                      <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div>
+                      <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                      <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div>
+                      <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                      <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                    </div>
+                  </td>
+                </tr>
+              )}
               {data?.map((el, index) => {
                 return (
                   <tr
@@ -155,6 +219,23 @@ const Cities = () => {
               })}
             </tbody>
           </table>
+          {data?.length === 0 && (
+            <div className="my-12 text-center">
+              <img
+                src="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+                className="mx-auto mb-8 w-2xs h-2xs"
+                alt="img"
+              />
+              <p className="mb-4 text-sm font-medium text-gray-900">No Data</p>
+              <button
+                onClick={handleAdd}
+                type="button"
+                className="cursor-pointer focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+              >
+                Create Now
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Main modal */}
@@ -261,6 +342,7 @@ const Cities = () => {
                         type="file"
                         name="image"
                         id="image"
+                        accept="image/png, image/jpeg"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                         placeholder="Upload image"
                         required
@@ -268,9 +350,16 @@ const Cities = () => {
                     </div>
                     <button
                       type="submit"
+                      disabled={loadingBtn}
                       className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                     >
-                      {editId ? "Update" : "Create"}
+                      {loadingBtn
+                        ? editId
+                          ? "Updating..."
+                          : "Creating..."
+                        : editId
+                        ? "Update"
+                        : "Create"}
                     </button>
                   </form>
                 </div>
@@ -330,9 +419,10 @@ const Cities = () => {
                     onClick={handleDelete}
                     data-modal-hide="popup-modal"
                     type="button"
+                    disabled={loadingBtn}
                     className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
                   >
-                    Yes, I'm sure
+                    {loadingBtn ? "Deleting...." : "Yes, I'm sure"}
                   </button>
                   <button
                     onClick={() => setDeleteId(null)}
@@ -348,27 +438,6 @@ const Cities = () => {
           </div>
         )}
       </section>
-
-      <div
-        onClick={handleAdd}
-        className="absolute bottom-10 right-10 z-50 rounded-full cursor-pointer bg-gray-800"
-      >
-        <svg
-          className="w-[58px] h-[58px] text-gray-800 dark:text-white"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          fill="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            fillRule="evenodd"
-            d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4.243a1 1 0 1 0-2 0V11H7.757a1 1 0 1 0 0 2H11v3.243a1 1 0 1 0 2 0V13h3.243a1 1 0 1 0 0-2H13V7.757Z"
-            clipRule="evenodd"
-          />
-        </svg>
-      </div>
     </>
   );
 };

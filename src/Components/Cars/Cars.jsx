@@ -1,28 +1,94 @@
 import React, { useEffect, useState } from "react";
 import { axios } from "../../Server/Api";
+import { toast } from "react-toastify";
 
 const Cars = () => {
+  const [brand, setBrand] = useState(null);
+  const [model, setModel] = useState(null);
+  const [city, setCity] = useState(null);
+  const [category, setCategory] = useState(null);
+  const [location, setLocation] = useState(null);
   const [data, setData] = useState(null);
   const [editId, setEditId] = useState(null);
   const [create, setCreate] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [loadingBtn, setLoadingBtn] = useState(false);
 
   // Get Cars
   useEffect(() => {
     axios.get("/cars").then((response) => {
       setData(response?.data?.data);
     });
+    axios.get("/brands").then((response) => {
+      setBrand(response?.data?.data);
+    });
+    axios.get("/models").then((response) => {
+      setModel(response?.data?.data);
+    });
+    axios.get("/cities").then((response) => {
+      setCity(response?.data?.data);
+    });
+    axios.get("/categories").then((response) => {
+      setCategory(response?.data?.data);
+    });
+    axios.get("/locations").then((response) => {
+      setLocation(response?.data?.data);
+    });
   }, [deleteId, editId, create]);
 
   // Add new Cars
   const handleAdd = async (evt) => {
     evt.preventDefault();
-    setCreate("newCars");
+    setLoadingBtn(true);
 
     const formData = new FormData();
-    formData.append("name", document.getElementById("name")?.value);
-    formData.append("text", document.getElementById("text")?.value);
+    formData.append("color", document.getElementById("color")?.value);
+    formData.append("year", document.getElementById("year")?.value);
+    formData.append("seconds", document.getElementById("seconds")?.value);
+    formData.append("max_speed", document.getElementById("max_speed")?.value);
+    formData.append("max_people", document.getElementById("max_people")?.value);
+    formData.append(
+      "transmission",
+      document.getElementById("transmission")?.value
+    );
+    formData.append("motor", document.getElementById("motor")?.value);
+    formData.append("drive_side", document.getElementById("drive_side")?.value);
+    formData.append("petrol", document.getElementById("petrol")?.value);
+    formData.append(
+      "limitperday",
+      document.getElementById("limitperday")?.value
+    );
+    formData.append("deposit", document.getElementById("deposit")?.value);
+    formData.append(
+      "premium_protection",
+      document.getElementById("premium_protection")?.value
+    );
+    formData.append(
+      "price_in_aed",
+      document.getElementById("price_in_AED")?.value
+    );
+    formData.append(
+      "price_in_usd",
+      document.getElementById("price_in_USD")?.value
+    );
+    formData.append(
+      "price_in_aed_sale",
+      document.getElementById("price_in_AED_sale")?.value
+    );
+    formData.append(
+      "price_in_usd_sale",
+      document.getElementById("price_in_USD_sale")?.value
+    );
+    formData.append("inclusive", document.getElementById("inclusive")?.checked);
+    formData.append("cover", document.getElementById("cover")?.files[0]);
+    formData.append("brand_id", document.getElementById("brand")?.value);
+    formData.append("model_id", document.getElementById("model")?.value);
+    formData.append("city_id", document.getElementById("city")?.value);
+    formData.append("category_id", document.getElementById("category")?.value);
+    formData.append("location_id", document.getElementById("location")?.value);
     formData.append("images", document.getElementById("image")?.files[0]);
+    formData.append("images", document.getElementById("image2")?.files[0]);
 
     try {
       const response = await axios.post("/cars", formData, {
@@ -31,24 +97,67 @@ const Cars = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log("Add successful:", response?.data);
+      toast.success("Add successful");
       setCreate(null);
     } catch (error) {
-      console.error(
-        "Error during add:",
-        error?.response?.data || error.message
-      );
+      toast.error("Error, Please try again later");
+    } finally {
+      setLoadingBtn(false);
     }
   };
 
   // Edit Cars
   const handleEdit = async (evt) => {
     evt.preventDefault();
+    setLoadingBtn(true);
 
     const formData = new FormData();
-    formData.append("name", document.getElementById("name")?.value);
-    formData.append("text", document.getElementById("text")?.value);
+    formData.append("color", document.getElementById("color")?.value);
+    formData.append("year", document.getElementById("year")?.value);
+    formData.append("seconds", document.getElementById("seconds")?.value);
+    formData.append("max_speed", document.getElementById("max_speed")?.value);
+    formData.append("max_people", document.getElementById("max_people")?.value);
+    formData.append(
+      "transmission",
+      document.getElementById("transmission")?.value
+    );
+    formData.append("motor", document.getElementById("motor")?.value);
+    formData.append("drive_side", document.getElementById("drive_side")?.value);
+    formData.append("petrol", document.getElementById("petrol")?.value);
+    formData.append(
+      "limitperday",
+      document.getElementById("limitperday")?.value
+    );
+    formData.append("deposit", document.getElementById("deposit")?.value);
+    formData.append(
+      "premium_protection",
+      document.getElementById("premium_protection")?.value
+    );
+    formData.append(
+      "price_in_aed",
+      document.getElementById("price_in_AED")?.value
+    );
+    formData.append(
+      "price_in_usd",
+      document.getElementById("price_in_USD")?.value
+    );
+    formData.append(
+      "price_in_aed_sale",
+      document.getElementById("price_in_AED_sale")?.value
+    );
+    formData.append(
+      "price_in_usd_sale",
+      document.getElementById("price_in_USD_sale")?.value
+    );
+    formData.append("inclusive", document.getElementById("inclusive")?.checked);
+    formData.append("cover", document.getElementById("cover")?.files[0]);
+    formData.append("brand_id", document.getElementById("brand")?.value);
+    formData.append("model_id", document.getElementById("model")?.value);
+    formData.append("city_id", document.getElementById("city")?.value);
+    formData.append("category_id", document.getElementById("category")?.value);
+    formData.append("location_id", document.getElementById("location")?.value);
     formData.append("images", document.getElementById("image")?.files[0]);
+    formData.append("images", document.getElementById("image2")?.files[0]);
 
     try {
       const response = await axios.put(`/cars/${editId}`, formData, {
@@ -58,17 +167,17 @@ const Cars = () => {
         },
       });
       setEditId(null);
-      console.log("Update successful:", response?.data);
+      toast.success("Update successful");
     } catch (error) {
-      console.error(
-        "Error during update:",
-        error?.response?.data || error.message
-      );
+      toast.error("Error, Please try again later");
+    } finally {
+      setLoadingBtn(false);
     }
   };
 
   // Delete Cars
   const handleDelete = () => {
+    setLoadingBtn(true);
     axios
       .delete(`/cars/${deleteId}`, {
         headers: {
@@ -76,14 +185,38 @@ const Cars = () => {
         },
       })
       .then(() => {
+        toast.success("Success to delete");
         setDeleteId(null);
+      })
+      .catch(() => {
+        toast.error("Error, Please try again later");
+      })
+      .finally(() => {
+        setLoadingBtn(false);
       });
   };
+
+  useEffect(() => {
+    if (!data) {
+      setLoading(true);
+    } else {
+      setLoading(false);
+    }
+  }, [data]);
 
   return (
     <>
       <section>
-        <h2 className="mb-6 font-bold text-3xl">Cars</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="font-bold text-3xl">Cars</h2>
+          <button
+            onClick={() => setCreate("newCars")}
+            type="button"
+            className="cursor-pointer focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+          >
+            Add new Car
+          </button>
+        </div>
 
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -107,6 +240,43 @@ const Cars = () => {
               </tr>
             </thead>
             <tbody>
+              {loading && (
+                <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200">
+                  <th
+                    scope="row"
+                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  >
+                    <div>
+                      <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                      <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                    </div>
+                  </th>
+                  <td className="px-6 py-4">
+                    <div>
+                      <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                      <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div>
+                      <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                      <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div>
+                      <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                      <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div>
+                      <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                      <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                    </div>
+                  </td>
+                </tr>
+              )}
               {data?.map((el, index) => {
                 return (
                   <tr
@@ -148,12 +318,29 @@ const Cars = () => {
               })}
             </tbody>
           </table>
+          {data?.length === 0 && (
+            <div className="my-12 text-center">
+              <img
+                src="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+                className="mx-auto mb-8 w-2xs h-2xs"
+                alt="img"
+              />
+              <p className="mb-4 text-sm font-medium text-gray-900">No Data</p>
+              <button
+                onClick={handleAdd}
+                type="button"
+                className="cursor-pointer focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+              >
+                Create Now
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Main modal */}
         {(editId || create) && (
           <div className=" overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-            <div className="relative mx-auto top-[20%] p-4 w-full max-w-md max-h-full">
+            <div className="relative mx-auto top-[2%] p-4 w-full max-w-[1100px] max-h-full">
               {/* Modal content */}
               <div className="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
                 {/* Modal header */}
@@ -201,69 +388,551 @@ const Cars = () => {
                       }
                     }}
                   >
-                    <div>
-                      <label
-                        htmlFor="name"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >
-                        Name
-                      </label>
-                      <input
-                        type="text"
-                        name="name"
-                        id="name"
-                        defaultValue={
-                          editId
-                            ? data?.find((item) => item.id === editId)?.name
-                            : ""
-                        }
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                        placeholder="Enter name"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="text"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >
-                        Text
-                      </label>
-                      <input
-                        type="text"
-                        name="text"
-                        id="text"
-                        defaultValue={
-                          editId
-                            ? data?.find((item) => item.id === editId)?.text
-                            : ""
-                        }
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                        placeholder="Enter text"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="image"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >
-                        Image
-                      </label>
-                      <input
-                        type="file"
-                        name="image"
-                        id="image"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                        placeholder="Upload image"
-                        required
-                      />
+                    <div className="flex flex-wrap gap-6">
+                      <div>
+                        <label
+                          htmlFor="color"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Color
+                        </label>
+                        <input
+                          type="text"
+                          name="color"
+                          id="color"
+                          defaultValue={
+                            editId
+                              ? data?.find((item) => item.id === editId)?.color
+                              : ""
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Enter Color"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="year"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Year
+                        </label>
+                        <input
+                          type="number"
+                          name="year"
+                          id="year"
+                          defaultValue={
+                            editId
+                              ? data?.find((item) => item.id === editId)?.year
+                              : ""
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Enter year"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="seconds"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Seconds
+                        </label>
+                        <input
+                          type="number"
+                          name="seconds"
+                          id="seconds"
+                          defaultValue={
+                            editId
+                              ? data?.find((item) => item.id === editId)
+                                  ?.seconds
+                              : ""
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Enter seconds"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="max_speed"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Max speed
+                        </label>
+                        <input
+                          type="number"
+                          name="max_speed"
+                          id="max_speed"
+                          defaultValue={
+                            editId
+                              ? data?.find((item) => item.id === editId)
+                                  ?.max_speed
+                              : ""
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Enter max speed"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="max_people"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Max people
+                        </label>
+                        <input
+                          type="number"
+                          name="max_people"
+                          id="max_people"
+                          defaultValue={
+                            editId
+                              ? data?.find((item) => item.id === editId)
+                                  ?.max_people
+                              : ""
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Enter max people"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="transmission"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Transmission
+                        </label>
+                        <input
+                          type="text"
+                          name="transmission"
+                          id="transmission"
+                          defaultValue={
+                            editId
+                              ? data?.find((item) => item.id === editId)
+                                  ?.transmission
+                              : ""
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Enter transmission"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="motor"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Motor
+                        </label>
+                        <input
+                          type="text"
+                          name="motor"
+                          id="motor"
+                          defaultValue={
+                            editId
+                              ? data?.find((item) => item.id === editId)?.motor
+                              : ""
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Enter Motor"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="drive_side"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Drive side
+                        </label>
+                        <input
+                          type="text"
+                          name="drive_side"
+                          id="drive_side"
+                          defaultValue={
+                            editId
+                              ? data?.find((item) => item.id === editId)
+                                  ?.drive_side
+                              : ""
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Enter Drive side"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="petrol"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Petrol
+                        </label>
+                        <input
+                          type="text"
+                          name="petrol"
+                          id="petrol"
+                          defaultValue={
+                            editId
+                              ? data?.find((item) => item.id === editId)?.petrol
+                              : ""
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Enter Petrol"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="limitperday"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Limitperday
+                        </label>
+                        <input
+                          type="number"
+                          name="limitperday"
+                          id="limitperday"
+                          defaultValue={
+                            editId
+                              ? data?.find((item) => item.id === editId)
+                                  ?.limitperday
+                              : ""
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Enter Limitperday"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="deposit"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Deposit
+                        </label>
+                        <input
+                          type="number"
+                          name="deposit"
+                          id="deposit"
+                          defaultValue={
+                            editId
+                              ? data?.find((item) => item.id === editId)
+                                  ?.deposit
+                              : ""
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Enter Deposit"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="premium_protection"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Premium protection
+                        </label>
+                        <input
+                          type="number"
+                          name="premium_protection"
+                          id="premium_protection"
+                          defaultValue={
+                            editId
+                              ? data?.find((item) => item.id === editId)
+                                  ?.premium_protection
+                              : ""
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Enter Premium protection"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="price_in_AED"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Price in AED
+                        </label>
+                        <input
+                          type="number"
+                          name="price_in_AED"
+                          id="price_in_AED"
+                          defaultValue={
+                            editId
+                              ? data?.find((item) => item.id === editId)
+                                  ?.price_in_aed
+                              : ""
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Enter Price in AED"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="price_in_USD"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Price in USD
+                        </label>
+                        <input
+                          type="number"
+                          name="price_in_USD"
+                          id="price_in_USD"
+                          defaultValue={
+                            editId
+                              ? data?.find((item) => item.id === editId)
+                                  ?.price_in_usd
+                              : ""
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Enter Price in USD"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="price_in_AED_sale"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Price in AED sale
+                        </label>
+                        <input
+                          type="number"
+                          name="price_in_AED_sale"
+                          id="price_in_AED_sale"
+                          defaultValue={
+                            editId
+                              ? data?.find((item) => item.id === editId)
+                                  ?.price_in_aed_sale
+                              : ""
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Enter Price in AED sale"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="price_in_USD_sale"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Price in USD sale
+                        </label>
+                        <input
+                          type="number"
+                          name="price_in_USD_sale"
+                          id="price_in_USD_sale"
+                          defaultValue={
+                            editId
+                              ? data?.find((item) => item.id === editId)
+                                  ?.price_in_usd_sale
+                              : ""
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Enter Price in USD sale"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="inclusive"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Inclusive
+                        </label>
+                        <input
+                          type="checkbox"
+                          name="inclusive"
+                          id="inclusive"
+                          defaultValue={
+                            editId
+                              ? data?.find((item) => item.id === editId)
+                                  ?.inclusive
+                              : ""
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Enter inclusive"
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="cover"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Cover
+                        </label>
+                        <input
+                          type="file"
+                          name="cover"
+                          id="cover"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Upload cover"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="image"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Image 1
+                        </label>
+                        <input
+                          type="file"
+                          name="image"
+                          id="image"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Upload image"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="image2"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Image 2
+                        </label>
+                        <input
+                          type="file"
+                          name="image2"
+                          id="image2"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Upload image"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="brand"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Brand title
+                        </label>
+                        <select
+                          id="brand"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        >
+                          <option value="">Choose a Brand</option>
+                          {brand?.map((el) => (
+                            <option key={el.id} value={el.id}>
+                              {el.title}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="model"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Model title
+                        </label>
+                        <select
+                          id="model"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        >
+                          <option value="">Choose a Model</option>
+                          {model?.map((el) => (
+                            <option key={el.id} value={el.id}>
+                              {el.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="city"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          City title
+                        </label>
+                        <select
+                          id="city"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        >
+                          <option value="">Choose a City</option>
+                          {city?.map((el) => (
+                            <option key={el.id} value={el.id}>
+                              {el.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="category"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Category title
+                        </label>
+                        <select
+                          id="category"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        >
+                          <option value="">Choose a Category</option>
+                          {category?.map((el) => (
+                            <option key={el.id} value={el.id}>
+                              {el.name_en}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="location"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Location title
+                        </label>
+                        <select
+                          id="location"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        >
+                          <option value="">Choose a Location</option>
+                          {location?.map((el) => (
+                            <option key={el.id} value={el.id}>
+                              {el.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
                     <button
                       type="submit"
                       className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                      disabled={loadingBtn}
                     >
-                      {editId ? "Update" : "Create"}
+                      {loadingBtn
+                        ? editId
+                          ? "Updating..."
+                          : "Creating..."
+                        : editId
+                        ? "Update"
+                        : "Create"}
                     </button>
                   </form>
                 </div>
@@ -323,9 +992,10 @@ const Cars = () => {
                     onClick={handleDelete}
                     data-modal-hide="popup-modal"
                     type="button"
+                    disabled={loadingBtn}
                     className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
                   >
-                    Yes, I'm sure
+                    {loadingBtn ? "Deleting...." : "Yes, I'm sure"}
                   </button>
                   <button
                     onClick={() => setDeleteId(null)}
@@ -341,27 +1011,6 @@ const Cars = () => {
           </div>
         )}
       </section>
-
-      <div
-        onClick={handleAdd}
-        className="absolute bottom-10 right-10 z-50 rounded-full cursor-pointer bg-gray-800"
-      >
-        <svg
-          className="w-[58px] h-[58px] text-gray-800 dark:text-white"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          fill="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            fillRule="evenodd"
-            d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4.243a1 1 0 1 0-2 0V11H7.757a1 1 0 1 0 0 2H11v3.243a1 1 0 1 0 2 0V13h3.243a1 1 0 1 0 0-2H13V7.757Z"
-            clipRule="evenodd"
-          />
-        </svg>
-      </div>
     </>
   );
 };

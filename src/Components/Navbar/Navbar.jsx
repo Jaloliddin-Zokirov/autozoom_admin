@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { FaCity, FaHome } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import { FaCity } from "react-icons/fa";
 import { GiExitDoor } from "react-icons/gi";
 import { IoIosBookmarks } from "react-icons/io";
 import {
@@ -10,11 +10,26 @@ import {
 import { SiThemodelsresource } from "react-icons/si";
 import { TbCategoryFilled } from "react-icons/tb";
 import { Link, Outlet, useNavigate } from "react-router-dom";
+import { axios } from "../../Server/Api";
+import { RxAvatar } from "react-icons/rx";
 
 const Navbar = () => {
   const [admin, setAdmin] = useState(false);
   const [modal, setModal] = useState(false);
+  const [me, setMe] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    axios
+      .get("/auth/me", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((response) => {
+        setMe(response?.data?.data);
+      });
+  }, []);
 
   const handleSignUp = () => {
     localStorage.clear();
@@ -60,22 +75,18 @@ const Navbar = () => {
                 <div>
                   <button
                     type="button"
-                    className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+                    className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 cursor-pointer"
                     aria-expanded="false"
                     data-dropdown-toggle="dropdown-user"
                     onClick={() => setAdmin(!admin)}
                   >
                     <span className="sr-only">Open user menu</span>
-                    <img
-                      className="w-8 h-8 rounded-full"
-                      src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                      alt="user photo"
-                    />
+                    <RxAvatar color="#fff" size={30} />
                   </button>
                 </div>
                 {admin && (
                   <div
-                    className="z-50 absolute top-5 -right-2 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-sm shadow-sm dark:bg-gray-700 dark:divide-gray-600"
+                    className="z-50 w-[200px] absolute top-5 -right-2 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-sm shadow-sm dark:bg-gray-700 dark:divide-gray-600"
                     id="dropdown-user"
                   >
                     <div className="px-4 py-3" role="none">
@@ -83,14 +94,19 @@ const Navbar = () => {
                         className="text-sm text-gray-900 dark:text-white"
                         role="none"
                       >
-                        Neil Sims
+                        {me?.first_name}
                       </p>
-                      <p
+                      <a
                         className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
                         role="none"
+                        href={`tel:${
+                          me?.phone_number.startsWith("+998")
+                            ? me?.phone_number
+                            : "+998" + me?.phone_number
+                        }`}
                       >
-                        neil.sims@flowbite.com
-                      </p>
+                        {me?.phone_number}
+                      </a>
                     </div>
                     <ul className="py-1" role="none">
                       <li>
@@ -136,15 +152,6 @@ const Navbar = () => {
             <li>
               <Link
                 to="/"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-              >
-                <FaHome size={22} />
-                <span className="ms-3">Dashboard</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="categories"
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
                 <TbCategoryFilled size={22} />

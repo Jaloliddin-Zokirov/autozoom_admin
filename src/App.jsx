@@ -1,6 +1,7 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Navbar from "./Components/Navbar/Navbar";
 import { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -15,6 +16,7 @@ function App() {
   return (
     <>
       <Navbar />
+      <ToastContainer />
     </>
   );
 }
